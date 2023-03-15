@@ -11,13 +11,21 @@ import { MailModule } from './mail/mail.module';
 import { ConfigModule } from '@nestjs/config';
 import { BullModule } from '@nestjs/bull';
 import { CommonModule } from './common/common.module';
-import { redisStore } from 'cache-manager-redis-store';
+import { MovieModule } from './movie/movie.module';
+import { CinemaModule } from './cinema/cinema.module';
+import { RoomModule } from './room/room.module';
+import { FoodModule } from './food/food.module';
+import { TicketModule } from './ticket/ticket.module';
+import { ShowtimeModule } from './showtime/showtime.module';
+import { ProvinceModule } from './province/province.module';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
+      host: process.env.DB,
       port: 5432,
       username: 'postgres',
       password: 'mysecretpassword',
@@ -50,6 +58,13 @@ import { redisStore } from 'cache-manager-redis-store';
     AuthModule,
     MailModule,
     CommonModule,
+    MovieModule,
+    CinemaModule,
+    RoomModule,
+    FoodModule,
+    TicketModule,
+    ShowtimeModule,
+    ProvinceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

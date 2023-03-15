@@ -1,5 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Rating } from 'src/movie/entities/rating.entity';
+import { Ticket } from 'src/ticket/entities/ticket.entity';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 @ObjectType()
 @Entity()
@@ -39,4 +41,10 @@ export class User {
   @Column({ default: () => 'CURRENT_TIMESTAMP' })
   @Field()
   updatedAt: Date;
+
+  @OneToMany(() => Rating, (rating) => rating.user)
+  Ratings: Rating[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.user)
+  tickets: Ticket[];
 }

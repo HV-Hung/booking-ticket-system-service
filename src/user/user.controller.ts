@@ -22,4 +22,8 @@ export class UserController {
       req.user.email,
     );
   }
+  @Get('init')
+  async initUser() {
+    return this.userService.initUser();
+  }
 }

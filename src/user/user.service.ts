@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { generate } from 'short-uuid';
+import { faker } from '@faker-js/faker/locale/vi';
 
 @Injectable()
 export class UserService {
@@ -81,5 +82,26 @@ export class UserService {
     const [users, count] = await queryBuilder.getManyAndCount();
 
     return [users, count];
+  }
+
+  async initUser() {
+    const users = [];
+
+    for (let i = 1; i <= 10; i++) {
+      const user = new User();
+      user.id = generate();
+      user.email = faker.internet.email();
+      user.password = await bcrypt.hash('1', 10);
+      user.name = faker.name.fullName();
+      user.phone = faker.phone.number();
+      user.birthDay = faker.date
+        .past(40, '2012-1-1')
+        .toISOString()
+        .slice(0, 10);
+      user.gender = i % 2 === 0 ? 'nam' : 'nữ';
+      users.push(user);
+    }
+    return await this.userRepository.insert(users);
+    // return users;
   }
 }
