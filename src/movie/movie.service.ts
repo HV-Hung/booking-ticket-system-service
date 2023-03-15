@@ -14,11 +14,11 @@ export class MovieService {
     private movieRepository: Repository<Movie>,
   ) {}
   create(createMovieDto: CreateMovieDto) {
-    return this.movieRepository.find();
+    return 'This action adds a new movie';
   }
 
   findAll() {
-    return `This action returns all movie`;
+    return this.movieRepository.find();
   }
 
   findOne(id: number) {
