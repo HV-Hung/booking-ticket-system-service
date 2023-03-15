@@ -14,7 +14,7 @@ export class MovieService {
     private movieRepository: Repository<Movie>,
   ) {}
   create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+    return this.movieRepository.find();
   }
 
   findAll() {
