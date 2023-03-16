@@ -8,6 +8,7 @@ import { User } from 'src/user/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
+import { Admin } from 'src/admin/entities/admin.entity';
 
 @Module({
   providers: [AuthService],
@@ -19,7 +20,7 @@ import { jwtConstants } from './constants';
     }),
     UserModule,
     MailModule,
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Admin]),
   ],
   controllers: [AuthController],
 })

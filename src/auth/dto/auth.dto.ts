@@ -38,3 +38,11 @@ export class SignInDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class AdminDto {
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+  @IsNotEmpty()
+  password: string;
+}

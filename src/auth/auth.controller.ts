@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { EmailDto, OTPDto, SignInDto, UserDto } from './dto/auth.dto';
+import { EmailDto, OTPDto, SignInDto, UserDto, AdminDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('auth')
@@ -27,5 +27,13 @@ export class AuthController {
   @Get('status')
   async checkStatus() {
     return this.authService.checkStatus();
+  }
+  @Post('admin/signup')
+  async adminSignUp(@Body() adminDto: AdminDto) {
+    return this.authService.adminSignUp(adminDto);
+  }
+  @Post('admin/signin')
+  async adminSignIn(@Body() adminDto: AdminDto, @Res() res) {
+    return this.authService.adminSignIn(adminDto, res);
   }
 }
