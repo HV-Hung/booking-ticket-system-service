@@ -7,7 +7,8 @@ import {
 } from 'typeorm';
 
 import { Province } from 'src/province/entities/province.entity';
-import { Room } from 'src/room/entities/room.entity';
+import { Showtime } from 'src/showtime/entities/showtime.entity';
+import { Max, Min } from 'class-validator';
 
 @Entity()
 export class Cinema {
@@ -23,8 +24,13 @@ export class Cinema {
   @Column({ nullable: true })
   address_url: string;
 
-  @OneToMany(() => Room, (room) => room.cinema)
-  rooms: Room[];
+  @Column({ default: 4 })
+  @Min(1)
+  @Max(10)
+  number_of_rooms: number;
+
+  @OneToMany(() => Showtime, (showtime) => showtime.cinema)
+  showtimes: Showtime[];
 
   @ManyToOne(() => Province, (province) => province.cinemas)
   province: Province;

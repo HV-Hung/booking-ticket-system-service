@@ -32,10 +32,6 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
   findOne(id: string): Promise<User> {
     return this.userRepository.findOneByOrFail({ id: id });
   }
@@ -50,38 +46,41 @@ export class UserService {
     return this.userRepository.remove(user);
   }
 
-  async getUsers(
-    limit?: number,
-    offset?: number,
-    filter: any = {},
-    sort: any = {},
-    email?: string,
-  ): Promise<[User[], number]> {
+  async findAll(
+    page = 1,
+    limit = 10,
+    sort = 'createdAt',
+    order: 'ASC' | 'DESC' = 'ASC',
+    filter = {},
+  ) {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
-    console.log('Get users from ', email);
     // Apply filter
     if (filter && Object.keys(filter).length > 0) {
       Object.keys(filter).forEach((key) => {
-        queryBuilder.andWhere(`user.${key} = :${key}`, { [key]: filter[key] });
+        const value = filter[key];
+        if (value === undefined || value === null || value === '') return;
+        queryBuilder.orWhere(`LOWER(user.${key}) ILIKE :${key}`, {
+          [key]: `%${value.toLowerCase()}%`,
+        });
       });
     }
-
     // Apply sorting
-    if (sort && Object.keys(sort).length > 0) {
-      Object.keys(sort).forEach((key) => {
-        queryBuilder.orderBy(`user.${key}`, sort[key]);
-      });
-    }
 
-    console.log({ limit, offset, filter, sort });
+    queryBuilder.orderBy(`user.${sort}`, order);
+
     // Apply pagination
-    queryBuilder.skip(offset || 0).take(limit || 10);
+    queryBuilder.skip((page - 1) * limit).take(limit);
 
     // Execute query and count total results
     const [users, count] = await queryBuilder.getManyAndCount();
 
-    return [users, count];
+    return {
+      data: users,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+    };
   }
 
   async initUser() {

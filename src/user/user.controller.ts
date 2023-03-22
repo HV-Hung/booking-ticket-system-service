@@ -1,11 +1,24 @@
-import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/guards/role.enum';
 import { RolesGuard } from 'src/auth/guards/role.guard';
+import { QueryDto } from 'src/common/dto/query.dto';
 
+interface ResponseUsers {
+  data: User[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -14,17 +27,11 @@ export class UserController {
   @Roles(Role.ADMIN)
   @Get()
   async getUsers(
-    @Query() { limit, offset, filter, sort },
-    @Req() req,
-  ): Promise<[User[], number]> {
-    console.log('______', { limit, offset, filter, sort });
-    return this.userService.getUsers(
-      limit,
-      offset,
-      filter,
-      sort,
-      req.user.email,
-    );
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query() { sort, order, filter }: QueryDto,
+  ): Promise<ResponseUsers> {
+    return this.userService.findAll(page, limit, sort, order, filter);
   }
   @Get('init')
   async initUser() {

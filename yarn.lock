@@ -1106,6 +1106,13 @@
   dependencies:
     uuid "8.3.2"
 
+"@nestjsx/crud-typeorm@^5.0.0-alpha.3":
+  version "5.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@nestjsx/crud-typeorm/-/crud-typeorm-5.0.0-alpha.3.tgz#069dedb5cc82fd4749082594b5f6952c160fcd51"
+  integrity sha512-9FN4iBELmhhSoVJj8457kaNGFKhm7IA7zJbLJRGuIb0+12WwCOhY0/bhMg1pWgZ1qUYtkYoELyMiMDroPPtARw==
+  dependencies:
+    "@zmotivat0r/o0" "^1.0.2"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -1829,6 +1836,11 @@
   version "4.2.2"
   resolved "https://registry.npmjs.org/@xtuc/long/-/long-4.2.2.tgz"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
+
+"@zmotivat0r/o0@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@zmotivat0r/o0/-/o0-1.0.2.tgz#5eb069a631678736234d4c34b07c3a2bae8f8e4b"
+  integrity sha512-wQ/sHqJEtYb+QtgxtWlBpGASFZ2avpoRWbvpginEuy7howZHTZTy3zYMRMaBKok4bZwIGU5bjmzE59+m1IWqKQ==
 
 abbrev@^1.0.0:
   version "1.1.1"

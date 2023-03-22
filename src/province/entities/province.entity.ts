@@ -12,7 +12,7 @@ export class Province {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @OneToMany(() => Cinema, (cinema) => cinema.province, {
