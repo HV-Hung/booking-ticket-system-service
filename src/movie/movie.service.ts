@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { initMovieData } from 'src/common/InitialDB/initialDB';
 import { Genre, Movie } from './entities/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull, Not } from 'typeorm';
 import { generate } from 'short-uuid';
 
 @Injectable()
@@ -13,24 +13,76 @@ export class MovieService {
     @InjectRepository(Movie)
     private movieRepository: Repository<Movie>,
   ) {}
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+
+  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
+    const existingMovie = await this.movieRepository.findOneBy({
+      name: createMovieDto.name,
+      director: createMovieDto.director,
+      releaseDate: createMovieDto.releaseDate,
+      deleteAt: IsNull(),
+
+    });
+
+    if (existingMovie) {
+      throw new HttpException(
+        'This movie already exists - Phim này đã có sẵn trong hệ thống',
+        HttpStatus.CONFLICT,
+      );
+    }
+
+    const id = generate();
+
+    const newMovie = this.movieRepository.create({ id, ...createMovieDto });
+
+    return this.movieRepository.save(newMovie);
   }
 
   findAll() {
-    return this.movieRepository.find();
+    return this.movieRepository.find({
+      where: {
+        deleteAt: IsNull(),
+      },
+  });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  findOne(id: string) {
+    // `This action returns a #${id} movie`;
+    const movie = this.movieRepository.findOneBy({
+      id: id,
+      deleteAt: IsNull(),
+    });
+
+    return movie;
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
+  update(id: string, updateMovieDto: UpdateMovieDto) {
+    //return `This action updates a #${id} movie`;
+    try{
+      
+      const updateResult = this.movieRepository.save(updateMovieDto);
+      return {result: 'Success - Cập nhật thành công'};
+    }
+    catch{
+      return {result: 'Fail - Cập nhật thất bại'};
+    }
+
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async remove(id: string) {
+    //`This action removes a #${id} movie`;
+    const existingMovie = await this.movieRepository.findOneBy({
+      id: id
+    });
+    
+    if(existingMovie == null || existingMovie.deleteAt != null){
+      return {result: 'Fail - Xóa thất bại'};
+    }
+    else{
+      existingMovie.deleteAt = new Date(Date.now()).toLocaleDateString();
+      const deleteResult = this.movieRepository.save(existingMovie);
+      return {result: 'Success - Xóa thành công'};
+    }
+
   }
   async initMovie() {
     const movies = [];

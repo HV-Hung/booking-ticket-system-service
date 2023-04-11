@@ -57,8 +57,12 @@ export class Movie {
 
   @Column({ nullable: true })
   age: string;
+
   @Column({ nullable: true })
   trailer_url: string;
+
+  @Column({ default: null })
+  deleteAt: string;
 
   @OneToMany(() => Rating, (rating) => rating.movie)
   rated: Rating[];
