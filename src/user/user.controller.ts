@@ -23,13 +23,11 @@ interface ResponseUsers {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.ADMIN)
   @Get()
   async getUsers(
-    @Query('page', ParseIntPipe) page: number,
-    @Query('limit', ParseIntPipe) limit: number,
-    @Query() { sort, order, filter }: QueryDto,
+    @Query() { page, limit, sort, order, filter },
   ): Promise<ResponseUsers> {
     return this.userService.findAll(page, limit, sort, order, filter);
   }

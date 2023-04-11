@@ -16,7 +16,10 @@ export class Showtime {
   id: string;
 
   @Column()
-  start: string;
+  start: Date;
+
+  @Column()
+  end: Date;
 
   @Column()
   room: number;
