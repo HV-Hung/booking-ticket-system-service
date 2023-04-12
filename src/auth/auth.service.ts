@@ -185,7 +185,13 @@ export class AuthService {
     if (!token) {
       throw new HttpException('Không có token!', HttpStatus.FORBIDDEN);
     }
-    res.cookie('token', token);
+    const cookieOptions: CookieOptions = {
+      maxAge: 1000 * 60 * 60,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true, // only send the cookie over https
+    };
+    res.cookie('token', token, cookieOptions);
     res.send({ message: 'Đăng nhập thành công!' });
   }
 
