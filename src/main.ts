@@ -5,9 +5,18 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // app.use((req, res, next) => {
+  //   const origin = req.header('Origin');
+
+  //   console.warn(`Origin not allowed: ${origin}`);
+
+  //   next();
+  // });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
     allowedHeaders: 'Content-Type',
     credentials: true,
   });

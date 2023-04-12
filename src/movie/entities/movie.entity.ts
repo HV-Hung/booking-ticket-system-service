@@ -56,7 +56,7 @@ export class Movie {
   description: string;
 
   @Column({ nullable: true })
-  age: string;
+  rated: string;
 
   @Column({ nullable: true })
   trailer_url: string;
@@ -65,7 +65,7 @@ export class Movie {
   deleteAt: string;
 
   @OneToMany(() => Rating, (rating) => rating.movie)
-  rated: Rating[];
+  rating: Rating[];
   @OneToMany(() => Showtime, (showtime) => showtime.movie)
   showtimes: Showtime[];
 }

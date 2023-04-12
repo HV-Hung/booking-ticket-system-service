@@ -23,8 +23,7 @@ interface ResponseUsers {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async getUsers(
     @Query() { page, limit, sort, order, filter },

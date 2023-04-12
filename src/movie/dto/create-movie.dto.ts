@@ -1,13 +1,12 @@
-import { InputType, Field, GraphQLISODateTime } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
 import { Genre } from 'src/movie/entities/movie.entity';
 
 @InputType()
 export class CreateMovieDto {
-  
   name: string;
 
   image: string;
-  
+
   director: string;
 
   actors: string;
@@ -15,15 +14,14 @@ export class CreateMovieDto {
   releaseDate: Date;
 
   genre: Genre[];
-  
+
   duration: number;
-  
+
   language: string;
-  
+
   description: string;
 
   age: string;
-  
-  trailer_url: string;
 
+  trailer_url: string;
 }

@@ -14,7 +14,7 @@ import { AdminDto, SignInDto, UserDto } from './dto/auth.dto';
 import { generate } from 'short-uuid';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import { Role } from './guards/role.enum';
 import { Admin } from 'src/admin/entities/admin.entity';
 
@@ -139,7 +139,13 @@ export class AuthService {
     if (!token) {
       throw new HttpException('Không có token!', HttpStatus.FORBIDDEN);
     }
-    res.cookie('token', token);
+    const cookieOptions: CookieOptions = {
+      maxAge: 1000 * 60 * 60,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true, // only send the cookie over https
+    };
+    res.cookie('token', token, cookieOptions);
     res.send({ message: 'Đăng nhập thành công!' });
   }
 
