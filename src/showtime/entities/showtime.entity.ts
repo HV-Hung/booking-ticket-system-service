@@ -16,9 +16,12 @@ export class Showtime {
   id: string;
 
   @Column()
+  date: string;
+
+  @Column({ type: 'timestamp' })
   start: Date;
 
-  @Column()
+  @Column({ type: 'timestamp' })
   end: Date;
 
   @Column()

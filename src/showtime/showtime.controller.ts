@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ShowtimeService } from './showtime.service';
-import { CreateShowtimeDto } from './dto/create-showtime.dto';
-import { UpdateShowtimeDto } from './dto/update-showtime.dto';
+import { Controller, Post, Body } from '@nestjs/common';
+import { CinemaShowtimes, ShowtimeService } from './showtime.service';
+import { CreateShowtimeDto, GenerateShowtimeDto } from './dto/showtime.dto';
 
 @Controller('showtime')
 export class ShowtimeController {
@@ -11,24 +10,14 @@ export class ShowtimeController {
   create(@Body() createShowtimeDto: CreateShowtimeDto) {
     return this.showtimeService.create(createShowtimeDto);
   }
-
-  @Get()
-  findAll() {
-    return this.showtimeService.findAll();
+  @Post('validate')
+  validate(@Body() createShowtimeDto: CreateShowtimeDto) {
+    return this.showtimeService.validate(createShowtimeDto);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.showtimeService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShowtimeDto: UpdateShowtimeDto) {
-    return this.showtimeService.update(+id, updateShowtimeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.showtimeService.remove(+id);
+  @Post('generate')
+  generate(
+    @Body() generateShowtimeDto: GenerateShowtimeDto,
+  ): Promise<CinemaShowtimes> {
+    return this.showtimeService.generate(generateShowtimeDto);
   }
 }

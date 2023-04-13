@@ -21,7 +21,7 @@ export class CreateMovieDto {
 
   description: string;
 
-  age: string;
+  rated: string;
 
   trailer_url: string;
 }
