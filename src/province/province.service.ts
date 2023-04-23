@@ -17,7 +17,7 @@ export class ProvinceService {
     page = 1,
     limit = 10,
     sort = 'name',
-    order: 'ASC' | 'DESC' = 'ASC',
+    order: 'ASC' | 'DESC' = 'DESC',
     filter: 'null' | 'notNull' | 'all' = 'all',
   ) {
     const queryBuilder = this.provinceRepository.createQueryBuilder('province');

@@ -3,6 +3,7 @@ import {
   Get,
   ParseIntPipe,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -22,6 +23,13 @@ interface ResponseUsers {
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.USER)
+  @Get('info')
+  getUser(@Req() req) {
+    return this.userService.getInfo(req.user.email);
+  }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()

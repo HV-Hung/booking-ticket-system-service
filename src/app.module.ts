@@ -13,7 +13,6 @@ import { BullModule } from '@nestjs/bull';
 import { CommonModule } from './common/common.module';
 import { MovieModule } from './movie/movie.module';
 import { CinemaModule } from './cinema/cinema.module';
-import { FoodModule } from './food/food.module';
 import { TicketModule } from './ticket/ticket.module';
 import { ShowtimeModule } from './showtime/showtime.module';
 import { ProvinceModule } from './province/province.module';
@@ -60,7 +59,6 @@ dotenv.config();
     CommonModule,
     MovieModule,
     CinemaModule,
-    FoodModule,
     TicketModule,
     ShowtimeModule,
     ProvinceModule,

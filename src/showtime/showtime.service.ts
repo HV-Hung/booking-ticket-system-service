@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Movie } from 'src/movie/entities/movie.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Showtime } from './entities/showtime.entity';
 import { addMinutes } from 'date-fns';
 import { Cinema } from 'src/cinema/entities/cinema.entity';
 import { CreateShowtimeDto, GenerateShowtimeDto } from './dto/showtime.dto';
 import { generate } from 'short-uuid';
+import { Province } from 'src/province/entities/province.entity';
 
 export interface CinemaShowtimes {
   date: Date;
@@ -23,6 +24,8 @@ export class ShowtimeService {
     private showtimeRepository: Repository<Showtime>,
     @InjectRepository(Cinema)
     private cinemaRepository: Repository<Cinema>,
+    @InjectRepository(Province)
+    private provinceRepository: Repository<Province>,
   ) {}
 
   async create(createShowtimeDto: CreateShowtimeDto) {
@@ -34,6 +37,7 @@ export class ShowtimeService {
 
     await this.showtimeRepository.delete({
       date: localeDate,
+      cinema: { id: cinemaShowtimes.cinema.id },
     });
     for (const room in cinemaShowtimes.showtimes) {
       const roomShowtime = cinemaShowtimes.showtimes[room];
@@ -169,7 +173,7 @@ export class ShowtimeService {
   ): CinemaShowtimes {
     const DAY_START_HOUR = 9;
     // Start from 9am
-    let start = new Date(date);
+    let start = date;
 
     const cinemaShowtimes: CinemaShowtimes = {
       date: start,
@@ -204,5 +208,151 @@ export class ShowtimeService {
     }
 
     return cinemaShowtimes;
+  }
+
+  async getShowtimeByCinema(cinemaId: string, date: string): Promise<any[]> {
+    const cinemaIdInt = parseInt(cinemaId);
+    if (isNaN(cinemaIdInt)) {
+      throw new BadRequestException('room not correct');
+    }
+
+    const cinema = await this.cinemaRepository.findOneBy({
+      id: cinemaIdInt,
+    });
+    // Check if cinema exists
+    if (!cinema) {
+      throw new BadRequestException('cinema must exist');
+    }
+    const localeDate = new Date(date).toLocaleDateString();
+    const showtimes = await this.showtimeRepository.find({
+      where: { date: localeDate, cinema: { id: cinema.id } },
+      order: { start: 'ASC' },
+      relations: ['movie'],
+    });
+
+    const groupedShowtimes = {};
+    showtimes.forEach((showtime) => {
+      const movieId = showtime.movie.id;
+      if (!groupedShowtimes[movieId]) {
+        groupedShowtimes[movieId] = {
+          movie: {
+            id: showtime.movie.id,
+            name: showtime.movie.name,
+            rated: showtime.movie.rated,
+            image: showtime.movie.image,
+          },
+          showtimes: [],
+        };
+      }
+      delete showtime.movie;
+      delete showtime.date;
+      delete showtime.room;
+      groupedShowtimes[movieId].showtimes.push(showtime);
+    });
+
+    return Object.values(groupedShowtimes);
+  }
+  async getShowtimeByMovie(movieId: string, date: string, provinceId: string) {
+    const movie = await this.movieRepository.findOneBy({
+      id: movieId,
+    });
+    // Check if movie exists
+    if (!movie) {
+      throw new BadRequestException('movie must exist');
+    }
+    const province = await this.provinceRepository.findOne({
+      where: { id: parseInt(provinceId) },
+      relations: ['cinemas'],
+    });
+    // Check if province exists
+    if (!province) {
+      throw new BadRequestException('province must exist');
+    }
+    const localeDate = new Date(date).toLocaleDateString();
+
+    const cinemaIds = province.cinemas.map((cinema) => cinema.id);
+    console.log(cinemaIds);
+    const showtimes = await this.showtimeRepository.find({
+      where: {
+        date: localeDate,
+        movie: { id: movie.id },
+        cinema: { id: In(cinemaIds) },
+      },
+      order: { start: 'ASC' },
+      relations: ['cinema'],
+    });
+
+    const groupedShowtimes = {};
+    showtimes.forEach((showtime) => {
+      const cinemaId = showtime.cinema.id;
+      if (!groupedShowtimes[cinemaId]) {
+        groupedShowtimes[cinemaId] = {
+          cinema: showtime.cinema,
+          showtimes: [],
+        };
+      }
+      delete showtime.cinema;
+      delete showtime.date;
+      delete showtime.room;
+
+      groupedShowtimes[cinemaId].showtimes.push(showtime);
+    });
+
+    return Object.values(groupedShowtimes);
+  }
+
+  async initShowtime() {
+    await this.showtimeRepository.delete({});
+    const DAY_START_HOUR = 9;
+    const cinemas = await this.cinemaRepository.find();
+    const movies = await this.movieRepository
+      .createQueryBuilder('movie')
+      .take(8)
+      .getMany();
+
+    const showtimes: Showtime[] = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      for (const cinema of cinemas) {
+        for (let room = 1; room < 5; room++) {
+          let start = new Date(date);
+          start.setHours(DAY_START_HOUR);
+          start.setMinutes(0);
+          start.setSeconds(0);
+
+          const randomMovies = Array.from({ length: 10 }, () => {
+            const randomIndex = Math.floor(Math.random() * movies.length);
+            return movies[randomIndex];
+          });
+          for (const movie of randomMovies) {
+            // Round up start time to nearest multiple of 5
+            if (start.getMinutes() !== 0 && start.getMinutes() % 5 !== 0) {
+              start = addMinutes(start, 5 - (start.getMinutes() % 5));
+            }
+
+            const durationInMinutes = movie.duration;
+            const end = addMinutes(start, durationInMinutes);
+
+            const showtime = new Showtime();
+            showtime.start = start;
+            showtime.end = end;
+            showtime.movie = movie;
+            showtime.id = generate();
+            showtime.date = start.toLocaleDateString();
+            showtime.movie = movie;
+            showtime.cinema = cinema;
+            showtime.room = room;
+
+            showtimes.push(showtime);
+
+            start = addMinutes(start, durationInMinutes + 15); // add 15 minutes for cleanup
+
+            if (start.getHours() < DAY_START_HOUR) break;
+          }
+        }
+      }
+    }
+    return this.showtimeRepository.insert(showtimes);
   }
 }

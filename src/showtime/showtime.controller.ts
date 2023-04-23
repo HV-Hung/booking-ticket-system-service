@@ -1,10 +1,24 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Query, Get } from '@nestjs/common';
 import { CinemaShowtimes, ShowtimeService } from './showtime.service';
 import { CreateShowtimeDto, GenerateShowtimeDto } from './dto/showtime.dto';
 
 @Controller('showtime')
 export class ShowtimeController {
   constructor(private readonly showtimeService: ShowtimeService) {}
+
+  @Get('cinema')
+  getShowtimeByCinema(@Query() { cinemaId, date }) {
+    return this.showtimeService.getShowtimeByCinema(cinemaId, date);
+  }
+
+  @Get('movie')
+  getShowtimeByMovie(@Query() { movieId, date, provinceId }) {
+    return this.showtimeService.getShowtimeByMovie(movieId, date, provinceId);
+  }
+  @Get('init')
+  initShowtime() {
+    return this.showtimeService.initShowtime();
+  }
 
   @Post()
   create(@Body() createShowtimeDto: CreateShowtimeDto) {

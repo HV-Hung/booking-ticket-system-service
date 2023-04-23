@@ -103,4 +103,8 @@ export class UserService {
     return await this.userRepository.insert(users);
     // return users;
   }
+
+  getInfo(email: string) {
+    return this.userRepository.findBy({ email: email });
+  }
 }
