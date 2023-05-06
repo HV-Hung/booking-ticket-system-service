@@ -20,6 +20,7 @@ export class MovieService {
       director: createMovieDto.director,
       releaseDate: createMovieDto.releaseDate,
       deleteAt: IsNull(),
+
     });
 
     if (existingMovie) {
@@ -36,12 +37,14 @@ export class MovieService {
     return this.movieRepository.save(newMovie);
   }
 
-  findAll() {
+  findAll(page, limit) {
     return this.movieRepository.find({
+      take: limit, // số lượng bản ghi cần lấy
+      skip: page*limit, // số lượng bản ghi bỏ qua
       where: {
         deleteAt: IsNull(),
       },
-    });
+  });
   }
 
   findOne(id: string) {
@@ -56,27 +59,32 @@ export class MovieService {
 
   update(id: string, updateMovieDto: UpdateMovieDto) {
     //return `This action updates a #${id} movie`;
-    try {
+    try{
+      
       const updateResult = this.movieRepository.save(updateMovieDto);
-      return { result: 'Success - Cập nhật thành công' };
-    } catch {
-      return { result: 'Fail - Cập nhật thất bại' };
+      return {result: 'Success - Cập nhật thành công'};
     }
+    catch{
+      return {result: 'Fail - Cập nhật thất bại'};
+    }
+
   }
 
   async remove(id: string) {
     //`This action removes a #${id} movie`;
     const existingMovie = await this.movieRepository.findOneBy({
-      id: id,
+      id: id
     });
-
-    if (existingMovie == null || existingMovie.deleteAt != null) {
-      return { result: 'Fail - Xóa thất bại' };
-    } else {
+    
+    if(existingMovie == null || existingMovie.deleteAt != null){
+      return {result: 'Fail - Xóa thất bại'};
+    }
+    else{
       existingMovie.deleteAt = new Date(Date.now()).toLocaleDateString();
       const deleteResult = this.movieRepository.save(existingMovie);
-      return { result: 'Success - Xóa thành công' };
+      return {result: 'Success - Xóa thành công'};
     }
+
   }
   async initMovie() {
     const movies = [];
