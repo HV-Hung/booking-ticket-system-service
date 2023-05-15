@@ -29,6 +29,9 @@ export class Cinema {
   @Max(10)
   number_of_rooms: number;
 
+  @Column({ default: null })
+  deleteAt: string;
+
   @OneToMany(() => Showtime, (showtime) => showtime.cinema)
   showtimes: Showtime[];
 
