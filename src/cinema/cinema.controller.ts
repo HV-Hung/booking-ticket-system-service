@@ -20,13 +20,13 @@ export class CinemaController {
     return this.cinemaService.create(createCinemaDto);
   }
 
-  @Get()
-  findAll() {
-    return this.cinemaService.findAll();
+  @Get('province/:provinceId')
+  findAll(@Param('provinceId') provinceId: number) {
+    return this.cinemaService.findCinemasByProvinceId(provinceId); // find all by id of province
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.cinemaService.findOne(+id);
   }
 

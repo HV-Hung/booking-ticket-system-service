@@ -4,6 +4,7 @@ import { IsNotEmpty, IsEnum, IsDate, IsNumber, isURL, ValidateIf, IsString, IsUr
 
 @InputType()
 export class CreateCinemaDto {
+
   @IsNotEmpty()
   name: string;
 
@@ -18,6 +19,10 @@ export class CreateCinemaDto {
 
   @IsNotEmpty()
   @IsNumber()
-  number_of_room: number;
+  number_of_rooms: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  provinceId: number;
 }
 
