@@ -152,6 +152,18 @@ export class AuthService {
   checkStatus() {
     throw new HttpException('oke', HttpStatus.OK);
   }
+  async getInfo(email) {
+    if (!email) {
+      throw new HttpException('Token không hợp lệ', HttpStatus.FORBIDDEN);
+    }
+    const user = this.userRepository.findOne({
+      where: { email: email },
+    });
+    if (!user) {
+      throw new HttpException('Token không hợp lệ', HttpStatus.FORBIDDEN);
+    }
+    return user;
+  }
 
   async adminSignIn(adminDto: AdminDto, res: Response) {
     const existingAdmin = await this.adminRepository.findOne({

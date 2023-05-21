@@ -13,11 +13,16 @@ export class Ticket {
   @ManyToOne(() => User, (user) => user.tickets)
   user: User;
 
-  @Column()
-  seat: string;
+  @Column('text', { array: true, default: [] })
+  seat: string[];
 
-  @Column('simple-array')
-  foods: string[];
+  @Column({
+    type: 'jsonb',
+    array: false,
+    default: () => "'[]'",
+    nullable: false,
+  })
+  foods: any;
 
   @Column()
   paymentMethod: string;
@@ -29,12 +34,6 @@ export class Ticket {
   cinemaName: string;
 
   @Column()
-  time: string;
-
-  @Column()
-  date: string;
-
-  @Column()
   totalTicket: number;
 
   @Column()
@@ -42,7 +41,6 @@ export class Ticket {
 
   @Column()
   movieImage: string;
-
   @Column()
-  room: number;
+  code: string;
 }

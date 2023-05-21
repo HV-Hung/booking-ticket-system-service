@@ -24,14 +24,14 @@ interface ResponseUsers {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.USER)
-  @Get('info')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.USER)
+  // @Get('info')
   getUser(@Req() req) {
     return this.userService.getInfo(req.user.email);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async getUsers(
     @Query() { page, limit, sort, order, filter },

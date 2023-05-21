@@ -16,7 +16,7 @@ import { Admin } from 'src/admin/entities/admin.entity';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '24h' },
     }),
     UserModule,
     MailModule,
