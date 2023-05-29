@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Query, Get } from '@nestjs/common';
+import { Controller, Post, Body, Query, Get, Param } from '@nestjs/common';
 import { CinemaShowtimes, ShowtimeService } from './showtime.service';
 import { CreateShowtimeDto, GenerateShowtimeDto } from './dto/showtime.dto';
 
@@ -33,5 +33,14 @@ export class ShowtimeController {
     @Body() generateShowtimeDto: GenerateShowtimeDto,
   ): Promise<CinemaShowtimes> {
     return this.showtimeService.generate(generateShowtimeDto);
+  }
+  @Get()
+  findAll() {
+    return this.showtimeService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.showtimeService.findOne(id);
   }
 }

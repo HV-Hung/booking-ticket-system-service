@@ -355,4 +355,27 @@ export class ShowtimeService {
     }
     return this.showtimeRepository.insert(showtimes);
   }
+
+  async findOne(id: string) {
+    // `This action returns a #${id} movie`;
+    const showtime = await this.showtimeRepository.findOne({
+      where: { id: id },
+      relations: ['movie', 'cinema'],
+    });
+    if (!showtime) {
+      throw new BadRequestException('showtime not found');
+    }
+    return showtime;
+  }
+
+  async findAll() {
+    // `This action returns a #${id} movie`;
+    const showtimes = await this.showtimeRepository.find({
+      relations: ['movie'],
+    });
+    if (!showtimes) {
+      throw new BadRequestException('showtime not found');
+    }
+    return showtimes;
+  }
 }

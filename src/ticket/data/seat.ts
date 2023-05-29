@@ -1,5 +1,5 @@
 const rows = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N'];
-const seats = [];
+const seatMap = [];
 let count = 0;
 const firstRow = [];
 const insideRows = [];
@@ -11,7 +11,7 @@ for (let i = 1; i < 17; i++) {
     price: 50000,
     id: count++,
   };
-  seats.push(seat);
+  seatMap.push(seat);
   firstRow.push(seat);
 }
 
@@ -24,7 +24,7 @@ rows.forEach((row) => {
       price: 80000,
       id: count++,
     };
-    seats.push(seat);
+    seatMap.push(seat);
     insideRow.push(seat);
   }
 
@@ -37,8 +37,8 @@ for (let i = 1; i < 9; i++) {
     price: 150000,
     id: count++,
   };
-  seats.push(seat);
+  seatMap.push(seat);
   lastRow.push(seat);
 }
 
-export { seats };
+export { seatMap };

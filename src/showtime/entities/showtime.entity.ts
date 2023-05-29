@@ -27,6 +27,9 @@ export class Showtime {
   @Column()
   room: number;
 
+  @Column('text', { array: true, default: [] })
+  seats: string[];
+
   @ManyToOne(() => Cinema, (cinema) => cinema.showtimes)
   cinema: Cinema;
 
