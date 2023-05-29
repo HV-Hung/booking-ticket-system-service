@@ -42,6 +42,10 @@ export class User {
   @Field()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  deletedAt: Date;
+
   @OneToMany(() => Rating, (rating) => rating.user)
   Ratings: Rating[];
 

@@ -41,9 +41,15 @@ export class UserService {
   }
 
   async remove(id: string): Promise<User> {
-    const user = await this.userRepository.findOneByOrFail({ id: id });
-    console.log({ id });
-    return this.userRepository.remove(user);
+    try{
+      const user = await this.userRepository.findOneByOrFail({ id: id });
+      user.deletedAt = new Date(Date.now());
+      //return this.userRepository.remove(user);
+      return this.userRepository.save(user);
+    }
+    catch{
+
+    }
   }
 
   async findAll(
@@ -107,4 +113,6 @@ export class UserService {
   getInfo(email: string) {
     return this.userRepository.findBy({ email: email });
   }
+
+  
 }
