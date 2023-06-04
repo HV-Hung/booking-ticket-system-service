@@ -14,6 +14,7 @@ import { User } from 'src/user/entities/user.entity';
 import { seatMap } from './data/seat';
 import { foods } from './data/food';
 import { generate } from 'short-uuid';
+import { initTicketData } from 'src/common/InitialDB/TicketInitial';
 
 @Injectable()
 export class TicketService {
@@ -119,4 +120,40 @@ export class TicketService {
   remove(id: number) {
     return `This action removes a #${id} ticket`;
   }
+
+  async initTicket() {
+    // const showtimes = await this.showtimeRepository.createQueryBuilder('movie')
+    // .take(5)
+    // .getMany();
+
+    // const tickets = [];
+    // for (const ticket of initTicketData) {
+    //   const newTicket = new Ticket();
+
+    //   newTicket.id = await this.ticketRepository.count() + 1;
+
+    //   newTicket.name = movie.name;
+    //   newTicket.actors = movie.actors;
+    //   newTicket.description = movie.description;
+    //   newTicket.genre = movie.genre as Genre[];
+    //   newTicket.director = movie.director;
+    //   newTicket.duration = movie.duration;
+    //   newTicket.image = movie.image;
+
+    //   const randomShowtime = Array.from({ length: 10 }, () => {
+    //     const randomIndex = Math.floor(Math.random() * showtimes.length);
+    //     return showtimes[randomIndex];
+    //   });
+
+    //   newTicket.showtime = randomShowtime;
+    //   newMovie.releaseDate = new Date(movie.releaseDate);
+    //   newMovie.trailer_url = movie.trailer_url;
+    //   newMovie.rated = movie.rated;
+
+    //   movies.push(newMovie);
+    // }
+    // return this.movieRepository.save(movies);
+    return 'no action';
+  }
+
 }

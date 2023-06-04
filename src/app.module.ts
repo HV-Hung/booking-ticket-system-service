@@ -17,6 +17,7 @@ import { TicketModule } from './ticket/ticket.module';
 import { ShowtimeModule } from './showtime/showtime.module';
 import { ProvinceModule } from './province/province.module';
 import { AdminModule } from './admin/admin.module';
+import { StatisticsModule } from './statistics/statistics.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -63,6 +64,7 @@ dotenv.config();
     ShowtimeModule,
     ProvinceModule,
     AdminModule,
+    StatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
