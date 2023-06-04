@@ -36,8 +36,7 @@ export class UserController {
     return this.userService.getInfo(req.user.email);
   }
 
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async getUsers(
     @Query() { page, limit, sort, order, filter },

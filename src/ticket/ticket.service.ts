@@ -83,7 +83,9 @@ export class TicketService {
   }
 
   findAll() {
-    return `This action returns all ticket`;
+    return this.ticketRepository.find({
+      order: { createdAt: 'DESC' },
+    });
   }
   async findTicketByUser(email) {
     const user = await this.userRepository.findOne({

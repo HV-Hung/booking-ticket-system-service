@@ -43,4 +43,7 @@ export class Ticket {
   movieImage: string;
   @Column()
   code: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }
