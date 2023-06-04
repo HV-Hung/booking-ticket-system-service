@@ -22,7 +22,7 @@ export class MovieController {
 
   @Get()
   findAll() {
-    return this.movieService.findAll(1,20);
+    return this.movieService.findAll(1, 20);
   }
   @Get('init')
   initMovie() {

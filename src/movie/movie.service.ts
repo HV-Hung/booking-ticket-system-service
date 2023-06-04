@@ -18,7 +18,7 @@ export class MovieService {
     const existingMovie = await this.movieRepository.findOneBy({
       name: createMovieDto.name,
       director: createMovieDto.director,
-      releaseDate: createMovieDto.releaseDate,
+      releaseDate: new Date(createMovieDto.releaseDate),
       deleteAt: IsNull(),
     });
 

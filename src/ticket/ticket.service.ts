@@ -155,5 +155,4 @@ export class TicketService {
     // return this.movieRepository.save(movies);
     return 'no action';
   }
-
 }
