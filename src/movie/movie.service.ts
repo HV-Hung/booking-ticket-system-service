@@ -37,7 +37,11 @@ export class MovieService {
   }
 
   findAll(page, limit) {
-    return this.movieRepository.find();
+    return this.movieRepository.find({
+      where:{
+        deleteAt: IsNull(),
+      }
+    });
   }
 
   findOne(id: string) {
