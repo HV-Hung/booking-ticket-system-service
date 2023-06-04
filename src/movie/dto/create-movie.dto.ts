@@ -24,7 +24,6 @@ export class CreateMovieDto {
   genre: Genre[];
 
   @IsNotEmpty()
-  @IsNumber()
   duration: number;
 
   @IsNotEmpty()
@@ -34,7 +33,7 @@ export class CreateMovieDto {
   description: string;
 
   @IsNotEmpty()
-  age: string;
+  rated: string;
 
   @IsNotEmpty()
   trailer_url: string;
