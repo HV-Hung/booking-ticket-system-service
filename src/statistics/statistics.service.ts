@@ -42,7 +42,7 @@ export class StatisticsService {
 
 
   async getTotalAllTime() {
-    console.log('total');
+    //console.log('total');
 
     const totalTicket = await this.ticketRepository
       .createQueryBuilder('ticket')
@@ -56,8 +56,8 @@ export class StatisticsService {
 
     const total = parseInt(totalTicket.sum) + parseInt(totalFood.sum);
 
-    console.log(totalTicket);
-    console.log(totalFood);
+    //console.log(totalTicket);
+    //console.log(totalFood);
 
     return total;
   }
@@ -112,7 +112,7 @@ export class StatisticsService {
     }
 
     const monthlyTotal = [];
-    for (let month = 1; month < 12; month++) {
+    for (let month = 1; month <= 12; month++) {
       const totalTicket = monthlyTotalTicket[month - 1].total;
       const totalFood = monthlyTotalFood[month - 1].total;
       const total = parseInt(totalTicket) + parseInt(totalFood);
