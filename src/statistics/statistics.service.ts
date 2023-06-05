@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { count } from "console";
+import { Cinema } from "src/cinema/entities/cinema.entity";
 import { Showtime } from "src/showtime/entities/showtime.entity";
 import { Ticket } from "src/ticket/entities/ticket.entity";
 import { User } from "src/user/entities/user.entity";
@@ -12,38 +14,11 @@ export class StatisticsService {
   constructor(
     @InjectRepository(Ticket) private ticketRepository: Repository<Ticket>,
     @InjectRepository(Showtime) private showtimeRepository: Repository<Showtime>,
+    @InjectRepository(Cinema) private cinemaRepository: Repository<Cinema>,
     @InjectRepository(User) private userRepository: Repository<User>,
   ) { }
 
-  async getTotalLatestMonth() {
-    console.log("this month is: ");
-    const currentMonth = new Date().getMonth();
-
-    const latestMonth = currentMonth - 1;
-
-    const totalTicket = await this.ticketRepository
-      .createQueryBuilder('ticket')
-      .where('MONTH(ticket.createdAt) = :latestMonth', { latestMonth })
-      .select('SUM(ticket.totalTicket)')
-      .getRawMany();
-
-    const totalFood = await this.ticketRepository
-      .createQueryBuilder('ticket')
-      .where('MONTH(ticket.createdAt) = :latestMonth', { latestMonth })
-      .select('SUM(ticket.totalFood)')
-      .getRawMany();
-
-    const total = +totalTicket + +totalFood;
-
-    console.log(total);
-
-    return total;
-  }
-
-
   async getTotalAllTime() {
-    console.log('total');
-
     const totalTicket = await this.ticketRepository
       .createQueryBuilder('ticket')
       .select('SUM(ticket.totalTicket)')
@@ -55,9 +30,6 @@ export class StatisticsService {
       .getRawOne();
 
     const total = parseInt(totalTicket.sum) + parseInt(totalFood.sum);
-
-    console.log(totalTicket);
-    console.log(totalFood);
 
     return total;
   }
@@ -112,7 +84,7 @@ export class StatisticsService {
     }
 
     const monthlyTotal = [];
-    for (let month = 1; month < 12; month++) {
+    for (let month = 1; month <= 12; month++) {
       const totalTicket = monthlyTotalTicket[month - 1].total;
       const totalFood = monthlyTotalFood[month - 1].total;
       const total = parseInt(totalTicket) + parseInt(totalFood);
@@ -128,4 +100,27 @@ export class StatisticsService {
       .getCount();
   }
 
+  async getCountTicket() {
+    return this.ticketRepository.createQueryBuilder('ticket')
+      .getCount();
+  }
+
+  async getLatestTicket() {
+    const recentTickets = await this.ticketRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 6,
+    });;
+
+    return recentTickets;
+  }
+
+  async getCountCinema() {
+    const countTicket = await this.cinemaRepository.find({
+      where:{
+        deleteAt: IsNull(),
+      }
+    });
+
+    return countTicket.length;
+  }
 }
