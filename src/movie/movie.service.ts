@@ -70,6 +70,8 @@ export class MovieService {
       id: id,
     });
 
+    console.log(id);
+
     if (existingMovie == null || existingMovie.deleteAt != null) {
       return { result: 'Fail - Xóa thất bại' };
     } else {
