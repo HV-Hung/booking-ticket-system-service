@@ -37,7 +37,11 @@ export class MovieService {
   }
 
   findAll(page, limit) {
-    return this.movieRepository.find();
+    return this.movieRepository.find({
+      where:{
+        deleteAt: IsNull(),
+      }
+    });
   }
 
   findOne(id: string) {
@@ -65,6 +69,8 @@ export class MovieService {
     const existingMovie = await this.movieRepository.findOneBy({
       id: id,
     });
+
+    console.log(id);
 
     if (existingMovie == null || existingMovie.deleteAt != null) {
       return { result: 'Fail - Xóa thất bại' };

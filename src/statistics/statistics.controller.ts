@@ -10,12 +10,6 @@ export class StatisticsController {
     return this.statisticsService.getCountUser();
   }
 
-  // @Get('getTotalLatestMonth')
-  // getTotalLatestMonth() {
-  //   //return 'ok';
-  //   return this.statisticsService.getTotalLatestMonth();
-  // }
-
   @Get('getTotalAllTime')
   getTotalAllTime() {
     return this.statisticsService.getTotalAllTime();
@@ -24,6 +18,21 @@ export class StatisticsController {
   @Get('getTotalEachMonth/:year')
   getTotalEachMonth(@Param('year') year: number) {
     return this.statisticsService.getTotalEachMonth(year);
+  }
+
+  @Get('getLatestTicket')
+  getLatestTicket() {
+    return this.statisticsService.getLatestTicket();
+  }
+
+  @Get('getCountTicket')
+  getCountTicket() {
+    return this.statisticsService.getCountTicket();
+  }
+
+  @Get('getCountCinema')
+  getCountCinema() {
+    return this.statisticsService.getCountCinema();
   }
 
 }
