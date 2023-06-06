@@ -86,6 +86,7 @@ export class TicketService {
   findAll() {
     return this.ticketRepository.find({
       order: { createdAt: 'DESC' },
+      relations: ['showtime', 'user'],
     });
   }
   async findTicketByUser(email) {
