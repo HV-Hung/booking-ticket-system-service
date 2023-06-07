@@ -225,4 +225,9 @@ export class AuthService {
 
     return savedAdmin;
   }
+
+  logout(res) {
+    res.clearCookie('token');
+    return 'Đăng xuất thành công';
+  }
 }
