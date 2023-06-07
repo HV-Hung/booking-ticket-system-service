@@ -153,8 +153,8 @@ export class AuthService {
     throw new HttpException('oke', HttpStatus.OK);
   }
   logout(res: Response) {
-    res.clearCookie('token');
-    throw new HttpException('oke', HttpStatus.OK);
+    res.cookie('token', '');
+    res.send({ message: 'Đăng xuất thành công!' });
   }
   async getInfo(email) {
     if (!email) {
