@@ -31,14 +31,14 @@ export class AuthController {
   async signIn(@Body() signInDto: SignInDto, @Res() res) {
     return this.authService.signIn(signInDto, res);
   }
+  @Get('logout')
+  logout(@Res() res) {
+    return this.authService.logout(res);
+  }
   @UseGuards(JwtAuthGuard)
   @Get('status')
   async checkStatus() {
     return this.authService.checkStatus();
-  }
-  @Get('logout')
-  async logout(@Res() res) {
-    return this.authService.logout(res);
   }
 
   @UseGuards(JwtAuthGuard)

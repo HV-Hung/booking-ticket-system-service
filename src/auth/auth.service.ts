@@ -152,6 +152,10 @@ export class AuthService {
   checkStatus() {
     throw new HttpException('oke', HttpStatus.OK);
   }
+  logout(res: Response) {
+    res.clearCookie('token');
+    throw new HttpException('oke', HttpStatus.OK);
+  }
   async getInfo(email) {
     if (!email) {
       throw new HttpException('Token không hợp lệ', HttpStatus.FORBIDDEN);
@@ -224,10 +228,5 @@ export class AuthService {
     delete savedAdmin.password;
 
     return savedAdmin;
-  }
-
-  logout(res) {
-    res.clearCookie('token');
-    return 'Đăng xuất thành công';
   }
 }
