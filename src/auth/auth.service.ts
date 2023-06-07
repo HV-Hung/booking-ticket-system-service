@@ -153,8 +153,13 @@ export class AuthService {
     throw new HttpException('oke', HttpStatus.OK);
   }
   logout(res: Response) {
-    res.cookie('token', '');
-    res.send({ message: 'Đăng xuất thành công!' });
+    res.clearCookie('token', {
+      maxAge: 1000 * 60 * 60,
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true, // only send the cookie over https
+    });
+    res.send({ message: 'Đăng  thành công!' });
   }
   async getInfo(email) {
     if (!email) {
