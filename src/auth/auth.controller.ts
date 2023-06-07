@@ -36,6 +36,10 @@ export class AuthController {
   async checkStatus() {
     return this.authService.checkStatus();
   }
+  @Get('logout')
+  async logout(@Res() res) {
+    return this.authService.logout(res);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('info')
