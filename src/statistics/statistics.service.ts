@@ -31,7 +31,7 @@ export class StatisticsService {
 
     const total = parseInt(totalTicket.sum) + parseInt(totalFood.sum);
 
-    return total;
+    return {"TotalAllTime": total};
   }
 
 
@@ -87,22 +87,37 @@ export class StatisticsService {
     for (let month = 1; month <= 12; month++) {
       const totalTicket = monthlyTotalTicket[month - 1].total;
       const totalFood = monthlyTotalFood[month - 1].total;
-      const total = parseInt(totalTicket) + parseInt(totalFood);
-      monthlyTotal.push({"month": month, "total": total});
+      const total = (parseInt(totalTicket) + parseInt(totalFood)) ;
+      if(Number.isNaN(total)){
+        monthlyTotal.push({"month": month, "total": 0});
+      }
+      else{
+        monthlyTotal.push({"month": month, "total": total});
+      }
     }
 
     return monthlyTotal;
   }
 
   async getCountUser() {
-    return this.userRepository.createQueryBuilder('user')
+    const countUser = await this.userRepository.createQueryBuilder('user')
       .where('user.deletedAt Is Null')//ngược lại là Is Not Null
       .getCount();
+
+      var json = {
+        CountUser: countUser
+      }
+      return json;
   }
 
   async getCountTicket() {
-    return this.ticketRepository.createQueryBuilder('ticket')
+    const countTicket = await this.ticketRepository.createQueryBuilder('ticket')
       .getCount();
+
+      var json = {
+        CountTicket: countTicket
+      }
+      return json;
   }
 
   async getLatestTicket() {
@@ -111,7 +126,7 @@ export class StatisticsService {
       take: 6,
     });;
 
-    return recentTickets;
+    return {"RecentTickets": recentTickets};
   }
 
   async getCountCinema() {
@@ -121,6 +136,6 @@ export class StatisticsService {
       }
     });
 
-    return countTicket.length;
+    return {"CountCinema": countTicket.length.toString()};
   }
 }
