@@ -20,6 +20,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:42467',
+      'https://dashboard.devhungops.website',
     ],
     allowedHeaders: 'Content-Type',
     credentials: true,
