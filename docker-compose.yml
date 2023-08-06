@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:13
-    container_name: bts
+    container_name: db
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -13,12 +13,6 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
-  redis:
-    image: redis:7.0.9-alpine
-    container_name: redis
-    restart: always
-    ports:
-      - "6379:6379"
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -30,6 +24,25 @@ services:
       - "8080:80"
     depends_on:
       - db
-
+  nest-app:
+    build: .
+    container_name: app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      JWT_SECRET: $2a$10$KKogmlfxOvj0kqznAxgCtu1fNTOV2D3vP9n.ydlyjeHJiR4fWY882
+      DB_HOST: db
+      DB_USER: postgres
+      DB_PW: mysecretpassword
+      DB_PORT: 5432
+      ORIGINS: http://localhost:5173,http://localhost:5174,http://localhost:42467,https://dashboard.devhungops.website,http://localhost:3000
+  ui:
+    image: hung6876/bts-ui
+    container_name: ui
+    ports:
+      - "5174:80"
+    
 volumes:
   db-data:

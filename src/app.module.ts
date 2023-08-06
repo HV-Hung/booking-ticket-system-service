@@ -7,9 +7,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { MailModule } from './mail/mail.module';
-import { ConfigModule } from '@nestjs/config';
-import { BullModule } from '@nestjs/bull';
 import { CommonModule } from './common/common.module';
 import { MovieModule } from './movie/movie.module';
 import { CinemaModule } from './cinema/cinema.module';
@@ -25,10 +22,10 @@ dotenv.config();
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB,
-      port: 5432,
-      username: 'postgres',
-      password: 'mysecretpassword',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PW,
       database: 'bts',
       entities: [join(__dirname, '**/*.entity{.ts,.js}')],
       synchronize: true,
@@ -42,21 +39,8 @@ dotenv.config();
         numberScalarMode: 'integer',
       },
     }),
-    BullModule.forRoot({
-      redis: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
-    CacheModule.register({
-      isGlobal: true,
-    }),
-    ConfigModule.forRoot({
-      isGlobal: true, // no need to import into other modules
-    }),
     UserModule,
     AuthModule,
-    MailModule,
     CommonModule,
     MovieModule,
     CinemaModule,

@@ -2,7 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
-
+import * as dotenv from 'dotenv';
+dotenv.config();
+const origins =[]
+if(process.env.ORIGINS) origins.push(process.env.ORIGINS?.split(",")) 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -16,13 +19,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:42467',
-      'https://dashboard.devhungops.website',
-      'http://localhost:3000',
-    ],
+    origin:[...origins],
     allowedHeaders: 'Content-Type',
     credentials: true,
   });

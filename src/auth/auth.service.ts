@@ -1,17 +1,12 @@
 import {
-  CACHE_MANAGER,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Cache } from 'cache-manager';
-import { AdminDto, SignInDto, UserDto } from './dto/auth.dto';
-import { generate } from 'short-uuid';
+import { AdminDto, SignInDto } from './dto/auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CookieOptions, Response } from 'express';
@@ -21,10 +16,8 @@ import { Admin } from 'src/admin/entities/admin.entity';
 @Injectable()
 export class AuthService {
   constructor(
-    private mailService: MailService,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Admin) private adminRepository: Repository<Admin>,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private jwtService: JwtService,
   ) {}
 
@@ -43,69 +36,70 @@ export class AuthService {
     return numStr;
   }
 
-  async signUp(userDto: UserDto) {
-    const foundEmail = await this.cacheManager.get('opt:' + userDto.otp);
-    if (foundEmail !== userDto.email) {
-      throw new HttpException(
-        'Mã otp hết hạn! vui lòng thử lại',
-        HttpStatus.CONFLICT,
-      );
-    } else {
-      this.cacheManager.del('opt:' + userDto.otp);
-      const existingUser = await this.userRepository.findOneBy({
-        email: userDto.email,
-      });
-      if (existingUser) {
-        throw new HttpException('Email đã được đăng ký!', HttpStatus.CONFLICT);
-      }
-      const hashedPassword = await bcrypt.hash(userDto.password, 10);
-      userDto.password = hashedPassword;
-      const id = generate();
-      delete userDto.otp;
-      const newUser = this.userRepository.create({ id, ...userDto });
+  // async signUp(userDto: UserDto) {
+  //   const foundEmail = await this.cacheManager.get('opt:' + userDto.otp);
+  //   if (foundEmail !== userDto.email) {
+  //     throw new HttpException(
+  //       'Mã otp hết hạn! vui lòng thử lại',
+  //       HttpStatus.CONFLICT,
+  //     );
+  //   } else {
+  //     this.cacheManager.del('opt:' + userDto.otp);
+  //     const existingUser = await this.userRepository.findOneBy({
+  //       email: userDto.email,
+  //     });
+  //     if (existingUser) {
+  //       throw new HttpException('Email đã được đăng ký!', HttpStatus.CONFLICT);
+  //     }
+  //     const hashedPassword = await bcrypt.hash(userDto.password, 10);
+  //     userDto.password = hashedPassword;
+  //     const id = generate();
+  //     delete userDto.otp;
+  //     const newUser = this.userRepository.create({ id, ...userDto });
 
-      const savedUser = await this.userRepository.save(newUser);
+  //     const savedUser = await this.userRepository.save(newUser);
 
-      delete savedUser.password;
+  //     delete savedUser.password;
 
-      return savedUser;
-    }
-  }
-  async validateEmail(email: string) {
-    const existingUser = await this.userRepository.findOneBy({
-      email: email,
-    });
-    if (existingUser) {
-      throw new HttpException(
-        'Email này đã được đăng kí vui lòng sử dụng email khác!',
-        HttpStatus.CONFLICT,
-      );
-    }
-    const ExistedOtps: string[] = await this.cacheManager.store.keys('opt:*');
-    const otp = this.randomNotInArray(ExistedOtps);
-    const expiresIn = 1000 * 60 * 5;
+  //     return savedUser;
+  //   }
+  // }
+  // async validateEmail(email: string) {
+  //   const existingUser = await this.userRepository.findOneBy({
+  //     email: email,
+  //   });
+  //   if (existingUser) {
+  //     throw new HttpException(
+  //       'Email này đã được đăng kí vui lòng sử dụng email khác!',
+  //       HttpStatus.CONFLICT,
+  //     );
+  //   }
+  //   const ExistedOtps: string[] = await this.cacheManager.store.keys('opt:*');
+  //   const otp = this.randomNotInArray(ExistedOtps);
+  //   const expiresIn = 1000 * 60 * 5;
 
-    await this.cacheManager.store.set('opt:' + otp, email, expiresIn);
+  //   await this.cacheManager.store.set('opt:' + otp, email, expiresIn);
 
-    // console.log('opt:7479', await this.cacheManager.get('opt:7479'));
+  //   // console.log('opt:7479', await this.cacheManager.get('opt:7479'));
 
-    // await this.cacheManager.store.reset();
-    // return await this.cacheManager.get('opt:1864');
+  //   // await this.cacheManager.store.reset();
+  //   // return await this.cacheManager.get('opt:1864');
 
-    await this.mailService.validateEmail(email, otp);
-  }
+  //   // await this.mailService.validateEmail(email, otp);
+  //   return "oke"
+  // }
 
-  async validateOTP(email: string, otp: string) {
-    const foundEmail = await this.cacheManager.get('opt:' + otp);
-    if (foundEmail == email) {
-      return 'oke';
-    } else {
-      throw new HttpException(
-        'Mã otp không hợp lệ! vui lòng thử lại',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
+  // async validateOTP(email: string, otp: string) {
+  //   const foundEmail = await this.cacheManager.get('opt:' + otp);
+  //   if (foundEmail == email) {
+  //     return 'oke';
+  //   } else {
+  //     throw new HttpException(
+  //       'Mã otp không hợp lệ! vui lòng thử lại',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  // }
 
   async signIn(signInDto: SignInDto, res: Response) {
     const existingUser = await this.userRepository.findOne({

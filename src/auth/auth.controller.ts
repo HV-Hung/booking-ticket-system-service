@@ -15,18 +15,18 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signup')
-  async signUp(@Body() userDto: UserDto) {
-    return this.authService.signUp(userDto);
-  }
-  @Post('validate-email')
-  async validateMail(@Body() emailDto: EmailDto) {
-    return this.authService.validateEmail(emailDto.email);
-  }
-  @Post('validate-otp')
-  async validateOTP(@Body() otpDto: OTPDto) {
-    return this.authService.validateOTP(otpDto.email, otpDto.otp);
-  }
+  // @Post('signup')
+  // async signUp(@Body() userDto: UserDto) {
+  //   return this.authService.signUp(userDto);
+  // }
+  // @Post('validate-email')
+  // async validateMail(@Body() emailDto: EmailDto) {
+  //   return this.authService.validateEmail(emailDto.email);
+  // }
+  // @Post('validate-otp')
+  // async validateOTP(@Body() otpDto: OTPDto) {
+  //   return this.authService.validateOTP(otpDto.email, otpDto.otp);
+  // }
   @Post('signin')
   async signIn(@Body() signInDto: SignInDto, @Res() res) {
     return this.authService.signIn(signInDto, res);
