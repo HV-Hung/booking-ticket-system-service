@@ -1,0 +1,101 @@
+name: App CI
+
+on:
+  push:
+    branches: 
+      - feat/github-action
+
+jobs:
+  echo-info:
+    runs-on: ubuntu-22.04
+    outputs:
+      short_sha: ${{ steps.vars.outputs.sha_short }}
+      current_time: ${{ steps.vars.outputs.time }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set outputs
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "time=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+
+      - name: echo info
+        run: |
+          echo "Short sha :${{ steps.vars.outputs.sha_short }}"
+          echo "Time :${{ steps.vars.outputs.time }}"
+
+  
+  build-push:
+    runs-on: self-hosted
+    needs: echo-info
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bts:${{ needs.echo-info.outputs.short_sha }}
+
+
+
+  # update-manifest:
+  #   runs-on: self-hosted
+  #   needs: [echo-info, build-push]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         repository: HV-Hung/web-ci-k8s
+  #         ref: 'main'
+  #         token: ${{ secrets.PAT_TOKEN}}
+
+  #     - name: setup git config
+  #       run: |
+  #         git config --global user.email "hoangvanhung6876@gmail.com"
+  #         git config --global user.name "hung"
+  #         sed -i "s#tag.*#tag: '${{ needs.echo-info.outputs.short_sha }}'#g" helm/web-app/values.yaml
+  #         git add -A
+  #         git commit -am "Update image for - ${{ needs.echo-info.outputs.short_sha}}"
+  #     - run: echo ${{ github }}
+  #     - run: git push origin main
+
+     
+
+
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: [echo-info, build-push]
+  #   steps:
+  #     - name: Azure login
+  #       id: login
+  #       uses: azure/login@v1.4.3
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Set AKS context
+  #       id: set-context
+  #       uses: azure/aks-set-context@v3
+  #       with:
+  #         resource-group: '${{ secrets.resource_group }}' 
+  #         cluster-name: '${{ secrets.cluster_name }}'
+  #     - name: Setup kubectl
+  #       id: install-kubectl
+  #       uses: azure/setup-kubectl@v3
+  #     - name: Deploy to AKS
+  #       id: deploy-aks
+  #       run: kubectl set image pod/web-deployment-68478857f9-zdzf7 web=hung6876/my-image:${{needs.echo-info.outputs.short_sha}}
+        
