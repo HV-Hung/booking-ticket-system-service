@@ -28,7 +28,7 @@ jobs:
 
   
   build-push:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     needs: echo-info
     steps:
       - name: Checkout code
